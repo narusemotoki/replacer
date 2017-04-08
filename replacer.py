@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import pelican
+import sys
+
+python3 = sys.version_info >= (3, 0, 0)
 
 
 def init(pelican_object):
@@ -12,10 +15,16 @@ def replace(path, context):
     with open(path, 'r') as f:
         s = f.read()
         for src, tgt in replaces:
-            s = s.decode('utf-8').replace(src.decode('utf-8'), tgt.decode('utf-8'))
+            if python3:
+                s = s.replace(src, tgt)
+            else:
+                s = s.decode('utf-8').replace(src.decode('utf-8'), tgt.decode('utf-8'))
 
     with open(path, 'w') as f:
-        f.write(s.encode('utf-8'))
+        if python3:
+            f.write(s)
+        else:
+            f.write(s.encode('utf-8'))
 
 
 def register():
